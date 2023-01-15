@@ -74,9 +74,11 @@ class Logger:
     # background color
     bg_red: str = "\033[48;5;1m"
 
+    log_level = 3
+
     def __init__(self, application_name, log_level=3) -> None:
         self.application_name = application_name
-        self.log_level = log_level
+        Logger.log_level = log_level
 
     def print(self, message, function_name='', end='\n', level=LogLevel.info) -> None:
         """
@@ -85,31 +87,32 @@ class Logger:
         Arguments:
             message (str): string to print
         """
-        if level.value < self.log_level:
+        if level.value < Logger.log_level:
             return
-        output = f'{self.color_purple}[{self.application_name}] '\
-                 f'{self.color_turquoise}[{function_name}] '\
-                 f'{self.color_blue}[{datetime.now()}]: '
+        output = ''
+        output += f'{self.color_purple}[{self.application_name}] '
+        output += f'{self.color_turquoise}[{function_name}] ' if function_name else ''
+        output += f'{self.color_blue}[{datetime.now()}] '
 
         if level == LogLevel.trace:
             output = f'{output}'\
-                     f'{self.color_turquoise}{message}'
+                     f'{self.color_turquoise}[ {level.name.upper()} ]: '
         elif level == LogLevel.debug:
             output = f'{output}'\
-                     f'{self.color_purple}{message}'
+                     f'{self.color_purple}[ {level.name.upper()} ]: '
         elif level == LogLevel.info:
             output = f'{output}'\
-                     f'{self.color_green}{message}'
+                     f'{self.color_green}[ {level.name.upper()} ]: '
         elif level == LogLevel.warn:
             output = f'{output}'\
-                     f'{self.color_yellow}{message}'
+                     f'{self.color_yellow}[ {level.name.upper()} ]: '
         elif level == LogLevel.error:
             output = f'{output}'\
-                     f'{self.color_red}{message}'
+                     f'{self.color_red}[ {level.name.upper()} ]: '
         elif level == LogLevel.fatal:
             output = f'{output}'\
-                     f'{self.bg_red}{self.color_white}{message}'
-        output = f'{output}{self.reset_attr}'
+                     f'{self.bg_red}{self.color_white}[ {level.name.upper()} ]{self.reset_attr}: '
+        output = f'{output}{self.reset_attr}{message}'
         print(output, end=end)
 
     def send_to_server(self) -> bool:

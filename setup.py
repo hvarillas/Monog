@@ -17,6 +17,7 @@ setup(
     long_description_content_type='text/markdown',
     packages=find_packages(exclude=['testing']),
     install_requires=[],
+    scripts=['bin/monog'],
     keywords=['python', 'log', 'monitoring'],
     classifiers=[
         "Development Status :: 1 - Planning",
