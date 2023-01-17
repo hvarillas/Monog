@@ -11,6 +11,7 @@ from tempfile import gettempdir
 # thirdparty
 import argparse
 # local
+from monog import Logger
 
 
 def del_config() -> None:
@@ -50,6 +51,7 @@ def main() -> None:
     """
     Main function
     """
+    logger = Logger("Monog")
     parse = argparse.ArgumentParser(description="script execution handle")
     # Add argument for command execution
     parse.add_argument(
@@ -78,23 +80,23 @@ def main() -> None:
     args = parse.parse_args()
     set_config(args)
     if not args.execution:
-        print('You need specify --exec')
+        logger.fatal('You need specify --exec')
         return
     last_error = ''
     for index in range(args.retry + 1):
         if index:
-            print(f'Retry execution number: {index}')
+            logger.info(f'Retry execution number: {index}')
         try:
             command = shlex.split(args.execution)
             with subprocess.Popen(command, stdout=sys.stdout, stderr=subprocess.PIPE) as process:
                 if (result := process.stderr):
                     last_error = ''.join([line.decode() for line in result.readlines()])
             if last_error:
-                print(f'Error in application:\n{last_error}')
+                logger.fatal(f'Error in application:\n{last_error}')
                 continue
             break
         except Exception as err:
-            print(f'Error in application:\n{err}\n\n{last_error}')
+            logger.fatal(f'- Error in application:\n{err}\n{last_error}')
 
 
 if __name__ == '__main__':
