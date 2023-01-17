@@ -37,7 +37,6 @@ def set_config(arguments: argparse.Namespace) -> None:
     --------
     * None
     """
-    print(type(arguments))
     del_config()
     configuration = {}
     if (level := arguments.level):
